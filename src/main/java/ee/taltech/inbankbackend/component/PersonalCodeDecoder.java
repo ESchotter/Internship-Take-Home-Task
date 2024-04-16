@@ -16,7 +16,7 @@ public class PersonalCodeDecoder {
      */
     public Integer calculateAgeFromPersonalCode(String personalCode) {
         int centuryOfBirth = 0;
-        
+
         if (Integer.parseInt(personalCode.substring(0, 1)) >= 1
                 && Integer.parseInt(personalCode.substring(0, 1)) <= 2) {
             centuryOfBirth = 19;

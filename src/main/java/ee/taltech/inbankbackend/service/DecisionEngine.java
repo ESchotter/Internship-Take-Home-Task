@@ -32,8 +32,7 @@ public class DecisionEngine {
      * @throws NoValidLoanException If there is no valid loan found for the given ID code, loan amount and loan period
      */
     public Decision calculateApprovedLoan(String personalCode, Long loanAmount, int loanPeriod)
-            throws InvalidPersonalCodeException, InvalidApplicantAgeException, InvalidLoanAmountException,
-            InvalidLoanPeriodException, NoValidLoanException {
+            throws InvalidInputException, NoValidLoanException {
         validator.validateInput(personalCode, loanAmount, loanPeriod);
 
         int outputLoanAmount;
