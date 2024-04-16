@@ -2,10 +2,7 @@ package ee.taltech.inbankbackend.service;
 
 import ee.taltech.inbankbackend.component.LoanInputValidator;
 import ee.taltech.inbankbackend.config.DecisionEngineConstants;
-import ee.taltech.inbankbackend.exceptions.InvalidLoanAmountException;
-import ee.taltech.inbankbackend.exceptions.InvalidLoanPeriodException;
-import ee.taltech.inbankbackend.exceptions.InvalidPersonalCodeException;
-import ee.taltech.inbankbackend.exceptions.NoValidLoanException;
+import ee.taltech.inbankbackend.exceptions.*;
 import org.springframework.stereotype.Service;
 
 /**
@@ -35,8 +32,8 @@ public class DecisionEngine {
      * @throws NoValidLoanException If there is no valid loan found for the given ID code, loan amount and loan period
      */
     public Decision calculateApprovedLoan(String personalCode, Long loanAmount, int loanPeriod)
-            throws InvalidPersonalCodeException, InvalidLoanAmountException, InvalidLoanPeriodException,
-            NoValidLoanException {
+            throws InvalidPersonalCodeException, InvalidApplicantAgeException, InvalidLoanAmountException,
+            InvalidLoanPeriodException, NoValidLoanException {
         validator.validateInput(personalCode, loanAmount, loanPeriod);
 
         int outputLoanAmount;

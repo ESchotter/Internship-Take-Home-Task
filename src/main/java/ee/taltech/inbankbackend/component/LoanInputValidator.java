@@ -2,6 +2,7 @@ package ee.taltech.inbankbackend.component;
 
 import com.github.vladislavgoltjajev.personalcode.locale.estonia.EstonianPersonalCodeValidator;
 import ee.taltech.inbankbackend.config.DecisionEngineConstants;
+import ee.taltech.inbankbackend.exceptions.InvalidApplicantAgeException;
 import ee.taltech.inbankbackend.exceptions.InvalidLoanAmountException;
 import ee.taltech.inbankbackend.exceptions.InvalidLoanPeriodException;
 import ee.taltech.inbankbackend.exceptions.InvalidPersonalCodeException;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class LoanInputValidator {
 
     private final EstonianPersonalCodeValidator validator  = new EstonianPersonalCodeValidator();
+    private final PersonalCodeDecoder decoder = new PersonalCodeDecoder();
 
     /**
      * Validates that all inputs are valid according to business rules.
@@ -24,8 +26,10 @@ public class LoanInputValidator {
      * @throws InvalidLoanPeriodException If the requested loan period is invalid
      */
     public void validateInput(String personalCode, Long loanAmount, int loanPeriod)
-            throws InvalidPersonalCodeException, InvalidLoanAmountException, InvalidLoanPeriodException {
+            throws InvalidPersonalCodeException, InvalidApplicantAgeException, InvalidLoanAmountException,
+            InvalidLoanPeriodException {
         validatePersonalCode(personalCode);
+        validateApplicantAge(personalCode);
         validateLoanAmount(loanAmount);
         validateLoanPeriod(loanPeriod);
     }
@@ -40,6 +44,23 @@ public class LoanInputValidator {
     private void validatePersonalCode(String personalCode) throws InvalidPersonalCodeException {
         if (!validator.isValid(personalCode)) {
             throw new InvalidPersonalCodeException("Invalid personal ID code!");
+        }
+    }
+
+    /**
+     * Validates that applicant age according to personal code in the input is valid.
+     * If applicant age is invalid, then throws corresponding exception
+     *
+     * @param personalCode The requested loan amount.
+     * @throws InvalidApplicantAgeException If the applicant age is invalid.
+     */
+    private void validateApplicantAge(String personalCode) throws InvalidApplicantAgeException {
+        Integer age = decoder.calculateAgeFromPersonalCode(personalCode);
+        String countryCode = decoder.findCountryCodeByPersonalCode(personalCode);
+        if (age < DecisionEngineConstants.MINIMUM_APPLICANT_AGE
+                || age + (DecisionEngineConstants.MAXIMUM_LOAN_PERIOD / 12) >
+                DecisionEngineConstants.LIFE_EXPECTANCY.getOrDefault(countryCode.toUpperCase(), 0)) {
+            throw new InvalidApplicantAgeException("No valid loan found due to age restriction!");
         }
     }
 

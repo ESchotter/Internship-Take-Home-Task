@@ -2,7 +2,7 @@
 
 This service provides a REST API for calculating an approved loan amount and period for a customer.
 The loan amount is calculated based on the customer's credit modifier, which is determined by the last four
-digits of their ID code.
+digits of their ID code, and customer's age, which is determined by first seven digits of their ID code.
 
 ## Technologies Used
 
@@ -72,6 +72,7 @@ The following error responses can be returned by the service:
     - `Invalid personal ID code!` - if the provided personal ID code is invalid
     - `Invalid loan amount!` - if the requested loan amount is invalid
     - `Invalid loan period!` - if the requested loan period is invalid
+    - `No valid loan found due to age restriction!` - if the applicant age determined by provided ID code is invalid
 - `404 Not Found` - in case no valid loans can be found
     - `No valid loan found!` - if there is no valid loan found for the given ID code, loan amount, and loan period
 - `500 Internal Server Error` - in case the server encounters an unexpected error while processing the request
